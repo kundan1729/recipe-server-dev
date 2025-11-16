@@ -10,10 +10,15 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://recipe-client-dev-z6ev.vercel.app',
-  credentials: true
-}));
+const frontendUrl = process.env.FRONTEND_URL;
+const corsOptions = {
+  // If FRONTEND_URL is set, use it; otherwise allow requests from any origin (reflect origin)
+  origin: frontendUrl || true,
+  credentials: true,
+};
+app.use(cors(corsOptions));
+// Ensure preflight requests (OPTIONS) are handled with the same CORS settings
+app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
